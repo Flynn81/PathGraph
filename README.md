@@ -1,42 +1,43 @@
 <b>Path Based Graphs</b>
 
 <b>Line Graph</b>
-<p>
-Y data - array (float or integer)</br>
-Y data label</br>
-Y data units</br>
-X data - array (float or integer)</br>
-X data label</br>
-X data units</br>
-series data - array of arrays (float or integer)</br>
-series data label - array of strings</br>
-animation:</br>
-    animate series in sequence - asc or desc</br>
-    animate series in parrallel</br>
-    animate speed based on total amount...</br>
-Overlay on points</br>
-</p>
+<ul>
+<li>Y data - array (float or integer)</li>
+<li>Y data label</li>
+<li>Y data units</li>
+<li>X data - array (float or integer)</li>
+<li>X data label</li>
+<li>X data units</li>
+<li>series data - array of arrays (float or integer)</li>
+<li>series data label - array of strings</li>
+<li>animation:<ul>
+<li>    animate series in sequence - asc or desc</li>
+<li>    animate series in parrallel</li>
+<li>    animate speed based on total amount...</li>
+</ul></li>
+<li>Overlay on points</li>
+</ul>
 
 <b>Pie Chart</b>
 
 <b>Bar Chart</b>
 
 <b>Stacked Line Graph</b>
-<p>
-Y data - array (float or integer)</br>
-Y data label</br>
-Y data units</br>
-X data - array (float or integer)</br>
-X data label</br>
-X data units</br>
-series data - array of arrays (float or integer)</br>
-series data label - array of strings</br>
-stacked solid or transparent</br>
-animation:</br>
-    animate series in sequence - asc or desc</br>
-    animate series in parrallel</br>
-    animate speed based on total amount...</br>
-</p>
+<ul>
+<li>Y data - array (float or integer)</li>
+<li>Y data label</li>
+<li>Y data units</li>
+<li>X data - array (float or integer)</li>
+<li>X data label</li>
+<li>X data units</li>
+<li>series data - array of arrays (float or integer)</li>
+<li>series data label - array of strings</li>
+<li>stacked solid or transparent</li>
+<li>animation:<ul>
+<li>    animate series in sequence - asc or desc</li>
+<li>    animate series in parrallel</li>
+<li>    animate speed based on total amount...</li></ul></li>
+</ul>
 
 <b>Candle Stick Graph</b>
 
