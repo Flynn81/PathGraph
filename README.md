@@ -1,38 +1,42 @@
 <b>Path Based Graphs</b>
 
 <b>Line Graph</b>
-Y data - array (float or integer)
-Y data label
-Y data units
-X data - array (float or integer)
-X data label
-X data units
-series data - array of arrays (float or integer)
-series data label - array of strings
-animation:
-    animate series in sequence - asc or desc
-    animate series in parrallel
-    animate speed based on total amount...
-Overlay on points
+<p>
+Y data - array (float or integer)</br>
+Y data label</br>
+Y data units</br>
+X data - array (float or integer)</br>
+X data label</br>
+X data units</br>
+series data - array of arrays (float or integer)</br>
+series data label - array of strings</br>
+animation:</br>
+    animate series in sequence - asc or desc</br>
+    animate series in parrallel</br>
+    animate speed based on total amount...</br>
+Overlay on points</br>
+</p>
 
 <b>Pie Chart</b>
 
 <b>Bar Chart</b>
 
 <b>Stacked Line Graph</b>
-Y data - array (float or integer)
-Y data label
-Y data units
-X data - array (float or integer)
-X data label
-X data units
-series data - array of arrays (float or integer)
-series data label - array of strings
-stacked solid or transparent
-animation:
-    animate series in sequence - asc or desc
-    animate series in parrallel
-    animate speed based on total amount...
+<p>
+Y data - array (float or integer)</br>
+Y data label</br>
+Y data units</br>
+X data - array (float or integer)</br>
+X data label</br>
+X data units</br>
+series data - array of arrays (float or integer)</br>
+series data label - array of strings</br>
+stacked solid or transparent</br>
+animation:</br>
+    animate series in sequence - asc or desc</br>
+    animate series in parrallel</br>
+    animate speed based on total amount...</br>
+</p>
 
 <b>Candle Stick Graph</b>
 
