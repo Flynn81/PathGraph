@@ -12,6 +12,7 @@ import android.graphics.PathEffect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 
 public class PathTestView extends View implements View.OnClickListener {
 
@@ -49,6 +50,7 @@ public class PathTestView extends View implements View.OnClickListener {
 	
 	private void init() {
 		mAnimator = ObjectAnimator.ofFloat(this, "length", 1f, 0.0f).setDuration(3000);
+		mAnimator.setInterpolator(new AccelerateInterpolator (1.0f));
 		post(new Runnable() {
             @Override
             public void run() {

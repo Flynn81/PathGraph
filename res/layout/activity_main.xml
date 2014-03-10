@@ -8,8 +8,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <com.example.patheffecttest.PathTestView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+<!--     <com.example.patheffecttest.PathTestView -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" /> -->
+<com.example.patheffecttest.LineGraph
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
 
 </RelativeLayout>
