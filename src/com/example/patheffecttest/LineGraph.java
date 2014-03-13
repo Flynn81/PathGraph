@@ -14,8 +14,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PathEffect;
-import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -52,12 +52,16 @@ public class LineGraph extends View implements View.OnClickListener {
 	private List<Path> mPathSeries;
 	private List<List<Path>> mPathSeriesPoints;
 	
+	private Path mTempPath;
+	
 	private Paint mPaint;
 	private ObjectAnimator mAnimator;
 	private float mLength;
 	
 	public LineGraph(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		mTempPath = new Path();
 		
 		mPaint = new Paint();
 		mPaint.setColor(Color.WHITE);
@@ -81,8 +85,6 @@ public class LineGraph extends View implements View.OnClickListener {
 		series.add(new Pair<Float,Float>(1.5f,2.2f));
 		series.add(new Pair<Float,Float>(0.75f,4f));
 		
-		
-		//TODO: need to order the pairs by an axis to make sure the line is formed correctly
 		Collections.sort(series, new Comparator<Pair<Float, Float>>() {
 			@Override
 			public int compare(Pair<Float, Float> left, Pair<Float, Float> right) {
@@ -94,10 +96,10 @@ public class LineGraph extends View implements View.OnClickListener {
 		
 		mSeries.add(series);
 		
-		mXAxisMin = Float.MIN_VALUE;
-		mXAxisMax = Float.MAX_VALUE;
-		mYAxisMin = Float.MIN_VALUE;
-		mYAxisMax = Float.MAX_VALUE;
+		mXAxisMin = Float.MAX_VALUE;
+		mXAxisMax = Float.MIN_VALUE;
+		mYAxisMin = Float.MAX_VALUE;
+		mYAxisMax = Float.MIN_VALUE;
 		for(List<Pair<Float,Float>> s : mSeries) {
 			for(Pair<Float,Float> p : s) {
 				if(p.first < mXAxisMin) {
@@ -114,6 +116,18 @@ public class LineGraph extends View implements View.OnClickListener {
 				}
 			}
 		}
+		
+		mPathSeries = new ArrayList<Path>();
+	}
+	
+	public void setData(List<List<Pair<Float, Float>>> data) {
+		mSeries = data;
+		invalidate();
+	}
+	
+	public void addSeries(List<Pair<Float,Float>> series) {
+		mSeries.add(series);
+		invalidate();
 	}
 	
 	private void init() {
@@ -130,26 +144,73 @@ public class LineGraph extends View implements View.OnClickListener {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		float width = getWidth();
+		float height = getHeight();
+		float xSize = Math.abs(mXAxisMax - mXAxisMin);
+		float ySize = Math.abs(mYAxisMax - mYAxisMin);
+
+		float paddingLeft = getPaddingLeft();
+		float paddingRight = getPaddingRight();
+		float paddingTop = getPaddingTop();
+		float paddingBottom = getPaddingBottom();
+		
+		xSize = xSize - paddingLeft - paddingRight;
+		ySize = ySize - paddingTop - paddingBottom;
+		
 		//Now we know our dimensions, so go ahead and determine adjusted points.
-		Path p = new Path();
-		p.moveTo(mSeries.get(0).get(0).first * 100f, mSeries.get(0).get(0).first * 100f);
-		for(int i=1; i<mSeries.get(0).size(); i++) {
-			p.lineTo(mSeries.get(0).get(i).first*100f, mSeries.get(0).get(i).second*100f);
+		for(List<Pair<Float, Float>> series : mSeries) {
+			for(Pair<Float, Float> pair : series) {
+				Log.d("TK","before - " + pair.first + ", " + pair.second);
+			}
 		}
-		mPathSeries = new ArrayList<Path>();
-		mPathSeries.add(p);
+		
+		//NEED TO REMEMBER WHERE ZERO IS IN THE CANVAS AND ADJUST ACCORDINGLY!
+		
+		if (mPathSeries != null && mPathSeries.size() == 0 && width > 0) {
+			for (List<Pair<Float, Float>> series : mSeries) {
+				float adjustedX = series.get(0).first;
+				float adjustedY = series.get(0).second;
+				adjustedX = (adjustedX - mXAxisMin) / xSize;
+				adjustedX = adjustedX * width;
+				adjustedY = (adjustedY - mYAxisMin) / ySize;
+				adjustedY = adjustedY * height;
+				Log.d("TK", "... " + adjustedX + ", " + adjustedY);
+				mTempPath.moveTo(adjustedX+paddingLeft, height - adjustedY + paddingTop);
+
+				for (int i = 1; i < series.size(); i++) {
+					adjustedX = series.get(i).first;
+					adjustedY = series.get(i).second;
+					adjustedX = (adjustedX - mXAxisMin) / xSize;
+					adjustedX = adjustedX * width;
+					adjustedY = (adjustedY - mYAxisMin) / ySize;
+					adjustedY = adjustedY * height;
+					Log.d("TK", "... " + adjustedX + ", " + adjustedY);
+					mTempPath.lineTo(adjustedX + paddingLeft, height - adjustedY + paddingTop);
+				}
+				
+				mPathSeries.add(mTempPath);
+			}
+		}
+		for(List<Pair<Float, Float>> series : mSeries) {
+			for(Pair<Float, Float> pair : series) {
+				Log.d("TK","after - " + pair.first + ", " + pair.second);
+			}
+		}
+		
+		
 		
 		init();
 	}
 	
 	@Override
 	public void onDraw(Canvas c) {
-		c.drawColor(Color.RED);
+		super.onDraw(c);
 		mPaint.setPathEffect(createPathEffect(760, 
 				mLength, 
 				0));
-		c.drawPath(mPathSeries.get(0), mPaint);
-		
+		for(Path path : mPathSeries) {
+			c.drawPath(path, mPaint);
+		}
 	}
 	
 	public void setLength(float length) {

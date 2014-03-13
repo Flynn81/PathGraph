@@ -13,6 +13,8 @@
 <!--         android:layout_height="wrap_content" /> -->
 <com.example.patheffecttest.LineGraph
         android:layout_width="100dp"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        android:background="#FF0000FF"
+        android:padding="50dp" />
 
 </RelativeLayout>
