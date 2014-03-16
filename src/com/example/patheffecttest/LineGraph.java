@@ -78,23 +78,6 @@ public class LineGraph extends View implements View.OnClickListener {
 		mDrawXAxisIntervals = true;
 		mDrawYAxisIntervals = true;
 		mSeries = new ArrayList<List<Pair<Float,Float>>>();
-		List<Pair<Float,Float>> series = new ArrayList<Pair<Float,Float>>();
-		series.add(new Pair<Float,Float>(1f,1f));
-		series.add(new Pair<Float,Float>(2f,1f));
-		series.add(new Pair<Float,Float>(3f,2f));
-		series.add(new Pair<Float,Float>(1.5f,2.2f));
-		series.add(new Pair<Float,Float>(0.75f,4f));
-		
-		Collections.sort(series, new Comparator<Pair<Float, Float>>() {
-			@Override
-			public int compare(Pair<Float, Float> left, Pair<Float, Float> right) {
-				if(left.first == right.first) return 0;
-				if(left.first > right.first) return 1;
-				return -1;
-			}
-		});
-		
-		mSeries.add(series);
 		
 		mXAxisMin = Float.MAX_VALUE;
 		mXAxisMax = Float.MIN_VALUE;
@@ -118,32 +101,91 @@ public class LineGraph extends View implements View.OnClickListener {
 		}
 		
 		mPathSeries = new ArrayList<Path>();
+		if(getWidth() > 0) {
+			initPaths();
+		}
+		invalidate();
 	}
 	
 	public void setData(List<List<Pair<Float, Float>>> data) {
 		mSeries = data;
+		for(List<Pair<Float,Float>> series : data) {
+			Collections.sort(series, new Comparator<Pair<Float, Float>>() {
+				@Override
+				public int compare(Pair<Float, Float> left, Pair<Float, Float> right) {
+					if(left.first == right.first) return 0;
+					if(left.first > right.first) return 1;
+					return -1;
+				}
+			});
+		}
+		if(getWidth() > 0) {
+				initPaths();
+		}
+		for(List<Pair<Float,Float>> s : mSeries) {
+			for(Pair<Float,Float> p : s) {
+				if(p.first < mXAxisMin) {
+					mXAxisMin = p.first;
+				}
+				if(p.first > mXAxisMax) {
+					mXAxisMax = p.first;
+				}
+				if(p.second < mYAxisMin) {
+					mYAxisMin = p.second;
+				}
+				if(p.second > mYAxisMax) {
+					mYAxisMax = p.second;
+				}
+			}
+		}
 		invalidate();
 	}
 	
 	public void addSeries(List<Pair<Float,Float>> series) {
+		Collections.sort(series, new Comparator<Pair<Float, Float>>() {
+			@Override
+			public int compare(Pair<Float, Float> left, Pair<Float, Float> right) {
+				if(left.first == right.first) return 0;
+				if(left.first > right.first) return 1;
+				return -1;
+			}
+		});
+		
 		mSeries.add(series);
+		for(List<Pair<Float,Float>> s : mSeries) {
+			for(Pair<Float,Float> p : s) {
+				if(p.first < mXAxisMin) {
+					mXAxisMin = p.first;
+				}
+				if(p.first > mXAxisMax) {
+					mXAxisMax = p.first;
+				}
+				if(p.second < mYAxisMin) {
+					mYAxisMin = p.second;
+				}
+				if(p.second > mYAxisMax) {
+					mYAxisMax = p.second;
+				}
+			}
+		}
 		invalidate();
 	}
 	
 	private void init() {
+		Log.d("TK","yoda 1");
 		mAnimator = ObjectAnimator.ofFloat(this, "length", 1f, 0.0f).setDuration(3000);
 		mAnimator.setInterpolator(new AccelerateInterpolator (1.0f));
-		post(new Runnable() {
-            @Override
-            public void run() {
+		//post(new Runnable() {
+        //   @Override
+        //    public void run() {
+            	Log.d("TK","yoda 2");
                 mAnimator.start();
-            }
-        });
+        //    }
+        //});
 	}
 	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	private void initPaths() {
+		Log.d("TK","yoda 3");
 		float width = getWidth();
 		float height = getHeight();
 		float xSize = Math.abs(mXAxisMax - mXAxisMin);
@@ -154,19 +196,13 @@ public class LineGraph extends View implements View.OnClickListener {
 		float paddingTop = getPaddingTop();
 		float paddingBottom = getPaddingBottom();
 		
-		xSize = xSize - paddingLeft - paddingRight;
-		ySize = ySize - paddingTop - paddingBottom;
+		width = width - paddingLeft - paddingRight;
+		height = height - paddingTop - paddingBottom;
 		
 		//Now we know our dimensions, so go ahead and determine adjusted points.
-		for(List<Pair<Float, Float>> series : mSeries) {
-			for(Pair<Float, Float> pair : series) {
-				Log.d("TK","before - " + pair.first + ", " + pair.second);
-			}
-		}
 		
 		//NEED TO REMEMBER WHERE ZERO IS IN THE CANVAS AND ADJUST ACCORDINGLY!
 		
-		if (mPathSeries != null && mPathSeries.size() == 0 && width > 0) {
 			for (List<Pair<Float, Float>> series : mSeries) {
 				float adjustedX = series.get(0).first;
 				float adjustedY = series.get(0).second;
@@ -190,21 +226,23 @@ public class LineGraph extends View implements View.OnClickListener {
 				
 				mPathSeries.add(mTempPath);
 			}
+			init();
+	}
+	
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		float width = getWidth();
+		
+		if (mPathSeries != null && mPathSeries.size() == 0 && width > 0) {
+			initPaths();
 		}
-		for(List<Pair<Float, Float>> series : mSeries) {
-			for(Pair<Float, Float> pair : series) {
-				Log.d("TK","after - " + pair.first + ", " + pair.second);
-			}
-		}
-		
-		
-		
-		init();
 	}
 	
 	@Override
 	public void onDraw(Canvas c) {
 		super.onDraw(c);
+		Log.d("TK","yoda 4");
 		mPaint.setPathEffect(createPathEffect(760, 
 				mLength, 
 				0));
