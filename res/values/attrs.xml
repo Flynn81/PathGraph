@@ -1,0 +1,7 @@
+<resources>
+   <declare-styleable name="LineGraph">
+       <attr name="color" format="color" />
+       <attr name="seriesColor" format="reference" />
+       <!-- maybe have it reference an array, to apply to multiple series -->
+   </declare-styleable>
+</resources>
