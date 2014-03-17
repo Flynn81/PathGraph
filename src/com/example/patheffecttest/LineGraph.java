@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -58,13 +59,26 @@ public class LineGraph extends View implements View.OnClickListener {
 	private ObjectAnimator mAnimator;
 	private float mLength;
 	
+	private int mColor = Color.BLACK;
+	
 	public LineGraph(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		TypedArray a = context.getTheme().obtainStyledAttributes(
+		        attrs,
+		        R.styleable.LineGraph,
+		        0, 0);
+
+		   try {
+			   mColor = a.getColor(R.styleable.LineGraph_color, Color.BLACK);
+		   } finally {
+		       a.recycle();
+		   }
 		
 		mTempPath = new Path();
 		
 		mPaint = new Paint();
-		mPaint.setColor(Color.WHITE);
+		mPaint.setColor(mColor);
 		mPaint.setStyle(Style.STROKE);
 		mPaint.setStrokeWidth(3);
 		mPaint.setAntiAlias(true);
