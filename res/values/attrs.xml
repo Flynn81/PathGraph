@@ -1,7 +1,16 @@
 <resources>
    <declare-styleable name="LineGraph">
+       <!-- TODO: add documentation -->
        <attr name="color" format="color" />
+       <!-- TODO: add documentation -->
        <attr name="seriesColor" format="reference" />
+       <!-- TODO: add documentation -->
+       <attr name="drawAxisLines" format="boolean" />
+       <!-- TODO: add documentation -->
+       <attr name="drawYAxisIntervals" format="boolean" />
        <!-- maybe have it reference an array, to apply to multiple series -->
+       <!-- Adjust data to use the minimum value as "zero" in the graph. -->
+       <attr name="adjust" format="boolean" />
+       <!-- specify interval text size -->
    </declare-styleable>
 </resources>

@@ -34,6 +34,8 @@ public class LineGraph extends View implements View.OnClickListener {
 	private boolean mDrawXAxisIntervals;
 	private boolean mDrawYAxisIntervals;
 	
+	private boolean mDrawAxisLines;
+	
 	private float mXAxisMin;
 	private float mXAxisMax;
 	private float mXAxisIntervalLength;
@@ -60,6 +62,11 @@ public class LineGraph extends View implements View.OnClickListener {
 	private float mLength;
 	
 	private int mColor = Color.BLACK;
+	
+	private float mWidthOffset;
+	private float mHeightOffset;
+	
+	private boolean mAdjustPlots; //TODO: true by default, adjust so the min value becomes the bottom value
 	
 	public LineGraph(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -205,12 +212,33 @@ public class LineGraph extends View implements View.OnClickListener {
 		float xSize = Math.abs(mXAxisMax - mXAxisMin);
 		float ySize = Math.abs(mYAxisMax - mYAxisMin);
 
+		mWidthOffset = 0f;
+		mHeightOffset = 0f;
+		
+		//Figure out what the offset (width and height) 
+		if(mDrawYAxisIntervals) {
+			//Find max length of y intervals and add that to the width offset.
+			float maxTextWidth = 0;
+			String temp;
+			for (List<Pair<Float, Float>> series : mSeries) {
+				for(Pair<Float, Float> pair : series) {
+					temp = String.valueOf(pair.second);
+					float textWidth = mPaint.measureText(temp, 0, temp.length());
+					if(textWidth > maxTextWidth) {
+						maxTextWidth = textWidth;
+					}
+				}
+			}
+			mWidthOffset = mWidthOffset + maxTextWidth;
+			//TODO: define number of intervals to draw
+		}
+		
 		float paddingLeft = getPaddingLeft();
 		float paddingRight = getPaddingRight();
 		float paddingTop = getPaddingTop();
 		float paddingBottom = getPaddingBottom();
 		
-		width = width - paddingLeft - paddingRight;
+		width = width - paddingLeft - paddingRight - mWidthOffset;
 		height = height - paddingTop - paddingBottom;
 		
 		//Now we know our dimensions, so go ahead and determine adjusted points.
@@ -225,7 +253,7 @@ public class LineGraph extends View implements View.OnClickListener {
 				adjustedY = (adjustedY - mYAxisMin) / ySize;
 				adjustedY = adjustedY * height;
 				Log.d("TK", "... " + adjustedX + ", " + adjustedY);
-				mTempPath.moveTo(adjustedX+paddingLeft, height - adjustedY + paddingTop);
+				mTempPath.moveTo(adjustedX+paddingLeft+mWidthOffset, height - adjustedY + paddingTop);
 
 				for (int i = 1; i < series.size(); i++) {
 					adjustedX = series.get(i).first;
@@ -235,7 +263,7 @@ public class LineGraph extends View implements View.OnClickListener {
 					adjustedY = (adjustedY - mYAxisMin) / ySize;
 					adjustedY = adjustedY * height;
 					Log.d("TK", "... " + adjustedX + ", " + adjustedY);
-					mTempPath.lineTo(adjustedX + paddingLeft, height - adjustedY + paddingTop);
+					mTempPath.lineTo(adjustedX + paddingLeft+mWidthOffset, height - adjustedY + paddingTop);
 				}
 				
 				mPathSeries.add(mTempPath);
@@ -253,6 +281,8 @@ public class LineGraph extends View implements View.OnClickListener {
 		}
 	}
 	
+	
+	//TODO: move any calculation out of onDraw
 	@Override
 	public void onDraw(Canvas c) {
 		super.onDraw(c);
@@ -262,6 +292,36 @@ public class LineGraph extends View implements View.OnClickListener {
 				0));
 		for(Path path : mPathSeries) {
 			c.drawPath(path, mPaint);
+		}
+		
+		mPaint.setPathEffect(null);
+		
+		//TODO: draw graph lines (x,y)
+		if(mDrawAxisLines) {
+			//TODO: have separate color for the axis lines
+			c.drawLine(mWidthOffset+getPaddingLeft(), getPaddingTop(), 
+					mWidthOffset+getPaddingTop(), getHeight()-getPaddingBottom()-mHeightOffset, mPaint);
+			c.drawLine(mWidthOffset+getPaddingLeft(), getHeight()-getPaddingBottom()-mHeightOffset, 
+					getWidth() - getPaddingRight(), getHeight()-getPaddingBottom()-mHeightOffset, mPaint);
+		}
+		if(mDrawYAxisIntervals) {
+			//mYAxisMax
+			//mYAxisMin
+			if(this.mAdjustPlots) {
+				//TODO: need this check when creating the paths, need to take it into account
+				
+			}
+			else {
+				//default to 5 ticks
+				//TODO: make this configurable, different auto strategies
+				float availableY = getHeight()-getPaddingBottom()-mHeightOffset - getPaddingTop();
+				float tickOffset = availableY / 6;
+				float integer = (mYAxisMax - mYAxisMin) / 6;
+				mPaint.setTextSize(23);				
+				for(int i=1; i<6; i++) {
+					c.drawText(String.valueOf(integer * i + mYAxisMin), 0, availableY+getPaddingTop() - (i * tickOffset), mPaint);
+				}
+			}
 		}
 	}
 	

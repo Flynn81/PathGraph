@@ -19,4 +19,14 @@
         android:background="#FF0000FF"
         android:padding="5dp" />
 
+<com.example.patheffecttest.LineGraph
+    	android:id="@+id/line_graph2"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/line_graph"
+        android:background="#3F009900"
+        pathgraph:color="#FFFFFFFF"
+        android:padding="5dp" />
+
 </RelativeLayout>

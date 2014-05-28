@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
 		series.add(new Pair<Float,Float>(0.75f,4f));
 		
 		graph.addSeries(series);
+		LineGraph graph2 = (LineGraph) findViewById(R.id.line_graph2);
+		graph.addSeries(series);
 	}
 
 	@Override
